@@ -3,7 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>B STORE</title>
+<title>B STORE — krossovkalar, kurtkalar, jemperlar va shimlar | Onlayn buyurtma</title>
+<meta name="description" content="B STORE onlayn do'koni: krossovkalar, balon kurtkalar, vetrovkalar, jemperlar va shimlar. Savatga qo'shing va bir necha soniyada buyurtma bering — operator siz bilan bog'lanadi.">
+<link rel="canonical" href="https://bstoreuz.online/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0F1B33">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+<!-- Telegram, Instagram, Facebook havolasi ko'rinishi -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="B STORE">
+<meta property="og:url" content="https://bstoreuz.online/">
+<meta property="og:title" content="B STORE — kiyim va krossovkalar onlayn do'koni">
+<meta property="og:description" content="Krossovkalar, kurtkalar, jemperlar va shimlar. Bir necha soniyada onlayn buyurtma bering.">
+<meta property="og:image" content="https://bstoreuz.online/images/IMG_6496.JPG">
+<meta property="og:locale" content="uz_UZ">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Google uchun do'kon va mahsulotlar haqida ma'lumot -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Store",
+      "@id": "https://bstoreuz.online/#store",
+      "name": "B STORE",
+      "url": "https://bstoreuz.online/",
+      "image": "https://bstoreuz.online/images/IMG_6496.JPG",
+      "currenciesAccepted": "UZS",
+      "address": {"@type": "PostalAddress", "addressLocality": "Toshkent", "addressCountry": "UZ"},
+      "sameAs": ["https://t.me/qwertyyy616"]
+    },
+    {
+      "@type": "ItemList",
+      "name": "B STORE mahsulotlari",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"item":{"@type":"Product","name":"Qora-oq sportivniy oyoq kiyim","image":"https://bstoreuz.online/images/IMG_6496.JPG","offers":{"@type":"Offer","price":"153000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":2,"item":{"@type":"Product","name":"Klassik oyoq kiyim (to'q ko'k, qora)","image":"https://bstoreuz.online/images/IMG_6498.JPG","offers":{"@type":"Offer","price":"202000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":3,"item":{"@type":"Product","name":"BRUNELLO CUCINELLI krossovka (ko'k, premium)","image":"https://bstoreuz.online/images/IMG_6499.JPG","offers":{"@type":"Offer","price":"504000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":4,"item":{"@type":"Product","name":"Klassik zamokli svitr","image":"https://bstoreuz.online/images/IMG_6495.JPG","offers":{"@type":"Offer","price":"135000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":5,"item":{"@type":"Product","name":"Balon kurtka (to'q ko'k)","image":"https://bstoreuz.online/images/IMG_6494.JPG","offers":{"@type":"Offer","price":"276000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":6,"item":{"@type":"Product","name":"Poluzamok svitr (ko'k, qora)","image":"https://bstoreuz.online/images/IMG_6492.JPG","offers":{"@type":"Offer","price":"170000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":7,"item":{"@type":"Product","name":"Zamokli xudi (ko'k)","image":"https://bstoreuz.online/images/IMG_6493.JPG","offers":{"@type":"Offer","price":"155000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":8,"item":{"@type":"Product","name":"Moncler kurtka (trikotaj yeng)","image":"https://bstoreuz.online/images/IMG_6497.JPG","offers":{"@type":"Offer","price":"343000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}},
+        {"@type":"ListItem","position":9,"item":{"@type":"Product","name":"Jinsi shim (ko'k)","image":"https://bstoreuz.online/images/IMG_6491.JPG","offers":{"@type":"Offer","price":"188000","priceCurrency":"UZS","availability":"https://schema.org/InStock","url":"https://bstoreuz.online/"}}}
+      ]
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -465,6 +515,7 @@ document.getElementById('checkoutBtn').onclick = ()=>{ buildOrderForm(); openMod
 document.querySelectorAll('.lang-toggle button').forEach(btn=>{
   btn.onclick = ()=>{
     lang = btn.dataset.lang;
+    document.documentElement.lang = lang;
     document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('active', b===btn));
     renderStatic(); renderCategories(); renderGrid(); syncCart();
   };
