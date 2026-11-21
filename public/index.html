@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B STORE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1B33; --bg-soft:#16254A; --card:#FFF8EC; --ink:#171208;
+    --ink-soft:#5A5243; --amber:#F2A33D; --amber-deep:#C97A1A; --line:#E7DCC6;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    background:var(--bg); color:var(--card); font-family:'Inter',sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    min-height:100%;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  a{color:inherit;}
+
+  header{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    padding:env(safe-area-inset-top,0px) 0 0 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .bar{
+    max-width:1100px; margin:0 auto; padding:18px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .logo{font-family:'Fraunces',serif; font-weight:700; font-size:26px; letter-spacing:.2px;}
+  .logo span{color:var(--amber);}
+  .bar-right{display:flex; align-items:center; gap:14px;}
+  .lang-toggle{
+    display:flex; border:1px solid rgba(255,255,255,.2); border-radius:999px; overflow:hidden;
+  }
+  .lang-toggle button{
+    background:none; border:none; color:var(--card); font:inherit; font-size:13px;
+    padding:7px 14px; cursor:pointer; opacity:.6;
+  }
+  .lang-toggle button.active{background:var(--amber); color:#241603; opacity:1; font-weight:600;}
+  .cart-btn{
+    position:relative; background:var(--card); color:var(--ink); border:none;
+    border-radius:999px; padding:9px 18px; font:inherit; font-size:14px; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; gap:8px;
+  }
+  .cart-count{
+    background:var(--amber-deep); color:#fff; border-radius:999px; min-width:20px; height:20px;
+    font-size:12px; display:flex; align-items:center; justify-content:center; padding:0 5px;
+  }
+
+  .hero{max-width:1100px; margin:0 auto; padding:56px 24px 36px;}
+  .hero h1{
+    font-family:'Fraunces',serif; font-weight:700; font-size:clamp(34px,5vw,54px);
+    line-height:1.08; margin:0 0 14px; max-width:14ch;
+  }
+  .hero p{color:rgba(255,248,236,.72); max-width:52ch; font-size:16px; line-height:1.6; margin:0;}
+
+  .categories{
+    max-width:1100px; margin:0 auto; padding:0 24px 8px; display:flex; gap:10px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  .categories::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none; border:1px solid rgba(255,255,255,.18); background:transparent; color:var(--card);
+    padding:9px 18px; border-radius:999px; font:inherit; font-size:14px; cursor:pointer;
+  }
+  .chip.active{background:var(--card); color:var(--ink); border-color:var(--card); font-weight:600;}
+
+  main{max-width:1100px; margin:0 auto; padding:28px 24px 80px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px;}
+  .product{
+    background:var(--card); color:var(--ink); border-radius:18px; padding:16px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .thumb{
+    aspect-ratio:1/1; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-size:46px; background:linear-gradient(145deg,#F4E8CE,#EADCB8); overflow:hidden;
+  }
+  .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .product h3{margin:0; font-size:16px; font-weight:600; line-height:1.3;}
+  .product .cat{font-size:12px; color:var(--ink-soft); margin:-6px 0 0;}
+  .row{display:flex; align-items:center; justify-content:space-between; margin-top:auto; gap:10px;}
+  .price{font-weight:700; font-size:17px;}
+  .add-btn{
+    background:var(--ink); color:var(--card); border:none; border-radius:10px;
+    padding:9px 14px; font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .add-btn:disabled{opacity:.4; cursor:not-allowed;}
+  .size-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .size-btn{
+    border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:8px;
+    padding:5px 9px; font:inherit; font-size:12px; cursor:pointer;
+  }
+  .size-btn.active{background:var(--ink); color:var(--card); border-color:var(--ink);}
+
+  .overlay{
+    position:fixed; inset:0; background:rgba(10,14,25,.55); opacity:0; pointer-events:none;
+    transition:opacity .25s; z-index:30;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:min(380px,92vw);
+    background:var(--bg-soft); color:var(--card); z-index:31; transform:translateX(100%);
+    transition:transform .3s ease; display:flex; flex-direction:column;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{padding:20px 20px 10px; display:flex; justify-content:space-between; align-items:center;}
+  .drawer-head h2{font-family:'Fraunces',serif; font-size:22px; margin:0;}
+  .close{background:none; border:none; color:var(--card); font-size:22px; cursor:pointer; line-height:1;}
+  .cart-list{flex:1; overflow-y:auto; padding:0 20px; display:flex; flex-direction:column; gap:14px;}
+  .cart-item{display:flex; gap:12px; align-items:center; border-bottom:1px solid rgba(255,255,255,.08); padding-bottom:14px;}
+  .cart-item .thumb{width:52px; height:52px; font-size:24px; flex:none; aspect-ratio:auto; overflow:hidden;}
+  .cart-item .info{flex:1; min-width:0;}
+  .cart-item .info .nm{font-size:14px; font-weight:600;}
+  .qty{display:flex; align-items:center; gap:8px;}
+  .qty button{
+    width:24px; height:24px; border-radius:7px; border:1px solid rgba(255,255,255,.2);
+    background:none; color:var(--card); cursor:pointer; font-size:15px; line-height:1;
+  }
+  .empty{color:rgba(255,248,236,.55); font-size:14px; padding:30px 0; text-align:center;}
+  .drawer-foot{padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));}
+  .total{display:flex; justify-content:space-between; font-size:15px; margin-bottom:12px;}
+  .checkout-btn{
+    width:100%; background:var(--amber); color:#241603; border:none; border-radius:12px;
+    padding:14px; font:inherit; font-size:15px; font-weight:700; cursor:pointer;
+  }
+  .checkout-btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  .modal{
+    position:fixed; inset:0; z-index:40; display:flex; align-items:flex-end; justify-content:center;
+    background:rgba(10,14,25,.6); opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  @media (min-width:640px){ .modal{align-items:center;} }
+  .modal.open{opacity:1; pointer-events:auto;}
+  .modal-card{
+    background:var(--card); color:var(--ink); width:100%; max-width:440px;
+    border-radius:20px 20px 0 0; padding:24px; transform:translateY(16px); transition:transform .25s;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+  }
+  @media (min-width:640px){ .modal-card{border-radius:20px;} }
+  .modal.open .modal-card{transform:translateY(0);}
+  .modal-card h2{font-family:'Fraunces',serif; margin:0 0 4px; font-size:22px;}
+  .modal-card p.sub{margin:0 0 18px; color:var(--ink-soft); font-size:14px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:5px;}
+  .field input, .field textarea{
+    width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+    font:inherit; font-size:14px; background:#fff; color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:60px;}
+  .modal-actions{display:flex; gap:10px; margin-top:16px;}
+  .ghost-btn{
+    flex:1; background:none; border:1px solid var(--line); border-radius:12px; padding:12px;
+    font:inherit; font-weight:600; cursor:pointer; color:var(--ink);
+  }
+  .submit-btn{
+    flex:2; background:var(--ink); color:var(--card); border:none; border-radius:12px;
+    padding:12px; font:inherit; font-weight:700; cursor:pointer;
+  }
+  .success{text-align:center; padding:10px 0;}
+  .success .tick{font-size:40px;}
+  [data-i18n]{display:inline;}
+  [hidden]{display:none !important;}
+
+  .tg-float{
+    position:fixed; right:18px; bottom:calc(18px + env(safe-area-inset-bottom,0px));
+    width:58px; height:58px; border-radius:50%; background:#229ED9; color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:28px;
+    text-decoration:none; box-shadow:0 10px 24px rgba(0,0,0,.4); z-index:25;
+    transition:transform .15s;
+  }
+  .tg-float:hover{transform:scale(1.06);}
+  .tg-tooltip{
+    position:fixed; right:84px; bottom:calc(30px + env(safe-area-inset-bottom,0px));
+    background:var(--card); color:var(--ink); font-size:13px; font-weight:600;
+    padding:8px 12px; border-radius:10px; z-index:25; white-space:nowrap;
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  @media (max-width:520px){ .tg-tooltip{display:none;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">B<span>STORE</span></div>
+    <div class="bar-right">
+      <div class="lang-toggle">
+        <button data-lang="uz" class="active">O'z</button>
+        <button data-lang="ru">Рус</button>
+      </div>
+      <button class="cart-btn" id="cartBtn">
+        🛍️ <span data-i18n="cart">Savat</span> <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 data-i18n="heroTitle">Xohlagan narsangizni toping, bitta joyda buyurtma bering</h1>
+  <p data-i18n="heroSub">Kategoriyani tanlang, savatga qo'shing va bir necha soniyada buyurtma yuboring — qolganini biz hal qilamiz.</p>
+</section>
+
+<div class="categories" id="categories"></div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2 data-i18n="yourCart">Savatingiz</h2>
+    <button class="close" id="closeDrawer">✕</button>
+  </div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="drawer-foot">
+    <div class="total"><span data-i18n="total">Jami</span><strong id="totalPrice">0 so'm</strong></div>
+    <button class="checkout-btn" id="checkoutBtn" disabled data-i18n="orderBtn">Buyurtma berish</button>
+  </div>
+</aside>
+
+<div class="modal" id="modal">
+  <div class="modal-card" id="modalCard">
+    <!-- content injected by JS -->
+  </div>
+</div>
+
+<span class="tg-tooltip" id="tgTooltip" data-i18n="tgTooltip">Savolingiz bormi? Yozing</span>
+<a class="tg-float" id="tgFloat" href="https://t.me/qwertyyy616" target="_blank" rel="noopener" aria-label="Telegram">💬</a>
+
+<script>
+const PRODUCTS = [
+  {id:1, cat:'oyoq-kiyim', emoji:'👟', img:'images/IMG_6496.JPG', name:{uz:"Qora-oq sportivniy oyoq kiyim",ru:"Чёрно-белые кроссовки"}, price:153000},
+  {id:2, cat:'oyoq-kiyim', emoji:'👟', img:'images/IMG_6498.JPG', name:{uz:"Klassik oyoq kiyim (Tymeniy siniy, qora)",ru:"Кроссовки в полоску (чёрные)"}, price:202000},
+  {id:3, cat:'oyoq-kiyim', emoji:'👞', img:'images/IMG_6499.JPG', name:{uz:"BRUNELLO CUCINELLI (ko'k, premium)",ru:"Кожаные кроссовки (синие, премиум)"}, price:504000},
+  {id:4, cat:'vetrovka', emoji:'🧥', img:'images/IMG_6495.JPG', name:{uz:"Klassik zamokli svitr",ru:"Флисовая куртка (синяя)"}, price:135000},
+  {id:5, cat:'balon', emoji:'🧥', img:'images/IMG_6494.JPG', name:{uz:"Balon kurtka (Tyemni siniy)",ru:"Пуховик (тёмно-синий)"}, price:276000},
+  {id:6, cat:'jemper', emoji:'🦶', img:'images/IMG_6492.JPG', name:{uz:"Poluzamok svitr (Siniy, Qora)",ru:"Трикотажная кофта (полузип)"}, price:170000},
+  {id:7, cat:'jemper', emoji:'🦶', img:'images/IMG_6493.JPG', name:{uz:"Zamokli xudi (ko'k)",ru:"Худи оверсайз (синий)"}, price:155000},
+  {id:8, cat:'balon', emoji:'🧥', img:'images/IMG_6497.JPG', name:{uz:"Moncler (trikotaj yeng)",ru:"Moncler (трикотажные рукава)"}, price:343000},
+  {id:9, cat:'shim', emoji:'👖', img:'images/IMG_6491.JPG', name:{uz:"Jinsiy shim (ko'k)",ru:"Утеплённые джинсы (синие)"}, price:188000, sizes:["28","29","30","31","32","33","34","36","38"]},
+  {id:10, cat:'shim', emoji:'👖', img:'', name:{uz:"Keng fasonli jin shim",ru:"Широкие джинсы"}, price:168000, sizes:["S","M","L","XL","XXL"]},
+];
+
+const CATS = [
+  {id:'all', uz:"Hammasi", ru:"Все"},
+  {id:'kurtka', uz:"Kurtkalar", ru:"Куртки"},
+  {id:'oyoq-kiyim', uz:"Oyoq kiyim", ru:"Обувь"},
+  {id:'jemper', uz:"Jemperlar", ru:"Свитера"},
+  {id:'vetrovka', uz:"Vetrovkalar", ru:"Ветровки"},
+  {id:'balon', uz:"Balon kurtkalar", ru:"Пуховики"},
+  {id:'shim', uz:"Shimlar", ru:"Брюки"},
+];
+const I18N = {
+  cart:{uz:"Savat",ru:"Корзина"},
+  heroTitle:{uz:"Xohlagan narsangizni toping, bitta joyda buyurtma bering",ru:"Найдите нужное и закажите в один клик"},
+  heroSub:{uz:"Kategoriyani tanlang, savatga qo'shing va bir necha soniyada buyurtma yuboring — qolganini biz hal qilamiz.",ru:"Выберите категорию, добавьте в корзину и оформите заказ за пару секунд."},
+  yourCart:{uz:"Savatingiz",ru:"Ваша корзина"},
+  total:{uz:"Jami",ru:"Итого"},
+  orderBtn:{uz:"Buyurtma berish",ru:"Оформить заказ"},
+  add:{uz:"Qo'shish",ru:"Добавить"},
+  emptyCart:{uz:"Savat hozircha bo'sh",ru:"Корзина пока пуста"},
+  modalTitle:{uz:"Buyurtmani rasmiylashtirish",ru:"Оформление заказа"},
+  modalSub:{uz:"Ma'lumotlaringizni qoldiring, operator siz bilan bog'lanadi.",ru:"Оставьте данные, оператор свяжется с вами."},
+  nameLbl:{uz:"Ismingiz",ru:"Ваше имя"},
+  phoneLbl:{uz:"Telefon raqam",ru:"Номер телефона"},
+  addrLbl:{uz:"Yetkazish manzili",ru:"Адрес доставки"},
+  noteLbl:{uz:"Izoh (ixtiyoriy)",ru:"Комментарий (необязательно)"},
+  cancel:{uz:"Bekor qilish",ru:"Отмена"},
+  confirm:{uz:"Tasdiqlash",ru:"Подтвердить"},
+  successTitle:{uz:"Buyurtma qabul qilindi!",ru:"Заказ принят!"},
+  successSub:{uz:"Tez orada operatorimiz siz bilan bog'lanadi.",ru:"Наш оператор скоро свяжется с вами."},
+  closeBtn:{uz:"Yopish",ru:"Закрыть"},
+  tgTooltip:{uz:"Savolingiz bormi? Yozing",ru:"Есть вопрос? Напишите"},
+};
+
+let lang = 'uz';
+let activeCat = 'all';
+let cart = {};
+
+function t(key){ return I18N[key][lang]; }
+function fmt(n){ return n.toLocaleString('ru-RU') + " so'm"; }
+
+function renderStatic(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(I18N[k]) el.textContent = I18N[k][lang];
+  });
+}
+
+function renderCategories(){
+  const wrap = document.getElementById('categories');
+  wrap.innerHTML = '';
+  CATS.forEach(c=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (c.id===activeCat ? ' active':'');
+    b.textContent = c[lang];
+    b.onclick = ()=>{ activeCat = c.id; renderCategories(); renderGrid(); };
+    wrap.appendChild(b);
+  });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const list = activeCat==='all' ? PRODUCTS : PRODUCTS.filter(p=>p.cat===activeCat);
+  list.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'product';
+    const sizesHtml = p.sizes ? `<div class="size-row">${p.sizes.map(s=>`<button class="size-btn" data-size="${s}">${s}</button>`).join('')}</div>` : '';
+    const thumbHtml = p.img ? `<img src="${p.img}" alt="${p.name[lang]}" onerror="this.replaceWith(document.createTextNode('${p.emoji}'))">` : p.emoji;
+    card.innerHTML = `
+      <div class="thumb">${thumbHtml}</div>
+      <h3>${p.name[lang]}</h3>
+      ${sizesHtml}
+      <div class="row">
+        <span class="price">${fmt(p.price)}</span>
+        <button class="add-btn"${p.sizes ? ' disabled':''}>${t('add')}</button>
+      </div>`;
+    const addBtn = card.querySelector('.add-btn');
+    if(p.sizes){
+      const sizeBtns = card.querySelectorAll('.size-btn');
+      sizeBtns.forEach(sb=>{
+        sb.onclick = ()=>{
+          sizeBtns.forEach(x=>x.classList.remove('active'));
+          sb.classList.add('active');
+          addBtn.disabled = false;
+          addBtn.dataset.size = sb.dataset.size;
+        };
+      });
+    }
+    addBtn.onclick = ()=>{
+      const size = addBtn.dataset.size || '';
+      const key = size ? `${p.id}::${size}` : `${p.id}`;
+      cart[key] = (cart[key]||0)+1;
+      syncCart();
+    };
+    grid.appendChild(card);
+  });
+}
+
+function syncCart(){
+  const count = Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('checkoutBtn').disabled = count===0;
+
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  if(count===0){
+    list.innerHTML = `<div class="empty">${t('emptyCart')}</div>`;
+  } else {
+    let total = 0;
+    Object.entries(cart).forEach(([key,qty])=>{
+      const [id, size] = key.split('::');
+      const p = PRODUCTS.find(x=>x.id==id);
+      total += p.price*qty;
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.innerHTML = `
+        <div class="thumb">${p.img ? `<img src="${p.img}" alt="">` : p.emoji}</div>
+        <div class="info">
+          <div class="nm">${p.name[lang]}${size?` · ${size}`:''}</div>
+          <div class="qty">
+            <button data-d="-1">−</button><span>${qty}</span><button data-d="1">+</button>
+          </div>
+        </div>
+        <strong>${fmt(p.price*qty)}</strong>`;
+      row.querySelectorAll('button').forEach(btn=>{
+        btn.onclick = ()=>{
+          const d = parseInt(btn.dataset.d);
+          cart[key] = (cart[key]||0)+d;
+          if(cart[key]<=0) delete cart[key];
+          syncCart();
+        };
+      });
+      list.appendChild(row);
+    });
+    document.getElementById('totalPrice').textContent = fmt(total);
+  }
+  if(count===0) document.getElementById('totalPrice').textContent = fmt(0);
+}
+
+function openDrawer(open){
+  document.getElementById('drawer').classList.toggle('open', open);
+  document.getElementById('overlay').classList.toggle('open', open);
+}
+
+function openModal(open){
+  document.getElementById('modal').classList.toggle('open', open);
+}
+
+function buildOrderForm(){
+  document.getElementById('modalCard').innerHTML = `
+    <h2>${t('modalTitle')}</h2>
+    <p class="sub">${t('modalSub')}</p>
+    <div class="field"><label>${t('nameLbl')}</label><input id="f_name" type="text"></div>
+    <div class="field"><label>${t('phoneLbl')}</label><input id="f_phone" type="tel" placeholder="+998 90 123 45 67"></div>
+    <div class="field"><label>${t('addrLbl')}</label><input id="f_addr" type="text"></div>
+    <div class="field"><label>${t('noteLbl')}</label><textarea id="f_note"></textarea></div>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="cancelOrder">${t('cancel')}</button>
+      <button class="submit-btn" id="confirmOrder">${t('confirm')}</button>
+    </div>`;
+  document.getElementById('cancelOrder').onclick = ()=> openModal(false);
+  document.getElementById('confirmOrder').onclick = async ()=>{
+    const name = document.getElementById('f_name').value.trim();
+    const phone = document.getElementById('f_phone').value.trim();
+    const address = document.getElementById('f_addr').value.trim();
+    const note = document.getElementById('f_note').value.trim();
+
+    if(!name || !phone){
+      alert(lang==='uz' ? "Ism va telefon raqamni kiriting" : "Введите имя и номер телефона");
+      return;
+    }
+
+    const items = Object.entries(cart).map(([key,qty])=>{
+      const [id, size] = key.split('::');
+      const p = PRODUCTS.find(x=>x.id==id);
+      return { name: p.name[lang] + (size?` (${size})`:''), qty, price: p.price };
+    });
+    const total = items.reduce((s,i)=> s + i.price*i.qty, 0);
+
+    const btn = document.getElementById('confirmOrder');
+    btn.disabled = true; btn.textContent = '...';
+
+    try{
+      const resp = await fetch('/api/order', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ name, phone, address, note, items, total })
+      });
+      const data = await resp.json();
+      if(!data.ok) throw new Error(data.error || 'error');
+
+      document.getElementById('modalCard').innerHTML = `
+        <div class="success">
+          <div class="tick">✅</div>
+          <h2>${t('successTitle')}</h2>
+          <p class="sub">${t('successSub')}</p>
+          <button class="submit-btn" style="width:100%; margin-top:10px;" id="closeSuccess">${t('closeBtn')}</button>
+        </div>`;
+      document.getElementById('closeSuccess').onclick = ()=>{
+        openModal(false); openDrawer(false);
+        cart = {}; syncCart();
+      };
+    }catch(err){
+      alert(lang==='uz' ? "Xatolik yuz berdi, qayta urinib ko'ring" : "Произошла ошибка, попробуйте снова");
+      btn.disabled = false; btn.textContent = t('confirm');
+    }
+  };
+}
+
+document.getElementById('cartBtn').onclick = ()=> openDrawer(true);
+document.getElementById('closeDrawer').onclick = ()=> openDrawer(false);
+document.getElementById('overlay').onclick = ()=> openDrawer(false);
+document.getElementById('checkoutBtn').onclick = ()=>{ buildOrderForm(); openModal(true); };
+
+document.querySelectorAll('.lang-toggle button').forEach(btn=>{
+  btn.onclick = ()=>{
+    lang = btn.dataset.lang;
+    document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderStatic(); renderCategories(); renderGrid(); syncCart();
+  };
+});
+
+renderStatic();
+renderCategories();
+renderGrid();
+syncCart();
+</script>
+</body>
+</html>
